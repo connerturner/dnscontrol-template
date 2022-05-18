@@ -1,0 +1,6 @@
+{
+    "test-domain-on-cloudflare": {
+        "apitoken": "$CF_TOKEN",
+        "accountid": "$CF_ACCOUNTID"
+    }
+}

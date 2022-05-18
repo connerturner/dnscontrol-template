@@ -1,0 +1,42 @@
+# 
+# .gitlab-ci.yml GitLab Configuration for dnscontrol
+# Author: Conner Turner <cturner@zyme.xyz>
+#
+
+# Use Alpine image with python to prevent default
+# ruby image being loaded.
+image: stackexchange/dnscontrol
+
+# Define pipeline order
+stages:
+  - test
+  - preview
+  - deploy
+
+dnscontrol_check:
+  stage: test
+  script:
+    - dnscontrol check
+
+dnscontrol_intermediate:
+  stage: test
+  script:
+    - dnscontrol print-ir > dnscontrol_ir.txt
+  artifacts:
+    name: "DNSControl Intermediate"
+    paths:
+      - dnscontrol_ir.txt
+
+dnscontrol_preview_artifact:
+  stage: preview
+  script: dnscontrol preview | tee dnscontrol_preview.txt
+  artifacts:
+    name: "DNSControl Preview"
+    paths:
+      - dnscontrol_preview.txt
+
+dnscontrol_push:
+  stage: deploy
+  script: dnscontrol push
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
